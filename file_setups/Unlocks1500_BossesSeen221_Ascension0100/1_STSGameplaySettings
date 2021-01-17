@@ -1,0 +1,15 @@
+{
+  "Summed Damage": "true",
+  "Blocked Damage": "true",
+  "Hand Confirmation": "true",
+  "Upload Data": "true",
+  "Particle Effects": "true",
+  "Fast Mode": "true",
+  "Show Card keys": "false",
+  "Bigger Text": "false",
+  "Long-press Enabled": "false",
+  "Screen Shake": "false",
+  "Playtester Art": "false",
+  "Controller Enabled": "true",
+  "Touchscreen Enabled": "false"
+}
