@@ -18,6 +18,8 @@ Watcher 4: Akabeko (an excellent relic for multihit or AoE cards such as Whirlwi
 
 Bosses seen: for all classes, the fastest bosses are Slime Boss, Collector, and Donu & Deca, with the exception that Watcher can kill Time Eater fastest.  
 
+At this time, the best way to download these setups is to download the full repo at https://github.com/OohBleh/Spire-speedruns-and-other-stuff/archive/main.zip  
+
 To use any of these setups:  
 
 	(0) make a backup of your game files just in case!  
