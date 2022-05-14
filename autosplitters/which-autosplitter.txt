@@ -1,0 +1,31 @@
+RECOMNMENDATIONS
+	1-character
+		use death-splits if you smoke bomb glitch & set up a hotkey to reset runs
+		use the plain autosplitter if you don't smoke bomb glitch
+	4-character
+		do NOT use death-splits
+		use only-act-3 if you use a compact layout
+
+Suffixes: 
+	(1) "Steam" 
+		-- works when StS is run on Steam (the exe name changed, so this required a fix)
+		-- otherwise, it works when StS is booted directly via script, terminal, etc
+	(2) "death splits"
+		-- turns any player death into a split rather than a reset
+		-- useful so that smoke bomb skipping the final boss leads to a split
+		-- bad for 4-character (splits several times during the Heart event floor)
+		-- makes no difference for A20
+	(3) "only-act-3"
+		-- no longer splits against Act I and II bosses
+		-- recommended for 4-character runs with a compact split layout
+	(4) "climb"
+		-- for ascension climb speedruns
+		-- starts upon first run embark
+		-- splits on Ruby, Emerald, Sapphire, and Amethyst achievements
+		-- splits on each ascension unlock
+		-- splits on A20 achievement
+	(5) "all-achievements"
+		-- for all achievements speedruns
+		-- starts upon file creation
+		-- splits on all "gem" and "gem+" achievements
+		-- splits for Powerful, Daily, an A20 achievements
