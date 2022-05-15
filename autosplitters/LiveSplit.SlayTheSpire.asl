@@ -22,13 +22,13 @@ state("SlayTheSpire")
 startup
 {
 	settings.Add("oneChar", true, "1-character mode (splits on every boss kill or skip)");
+	settings.Add("deathReset", true, "resets on death", "oneChar");
 	settings.Add("fourChar", false, "4-character mode (splits on every Act III boss kill or skip)");
-	settings.Add("deathReset", false, "resets on death (only for 1-character runs)");
 	
 	settings.Add("ascClimb", false, "ascension climb");
 	settings.Add("allAchieves", false, "all achievements");
-	settings.Add("powerSplit", false, "split for Powerful achievement (all achievements only)");
-	settings.Add("neonSplit", false, "split for Neon achievement (all achievements only)");
+	settings.Add("powerSplit", false, "split for Powerful achievement", "allAchieves");
+	settings.Add("neonSplit", false, "split for Neon achievement", "allAchieves");
 	
 	bool bossKilled = false;
 }
