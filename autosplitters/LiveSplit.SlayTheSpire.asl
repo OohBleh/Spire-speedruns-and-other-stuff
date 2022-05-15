@@ -27,8 +27,8 @@ startup
 	
 	settings.Add("ascClimb", false, "ascension climb");
 	settings.Add("allAchieves", false, "all achievements");
-	settings.Add("powerSplit", false, "split for Powerful achievement");
-	settings.Add("neonSplit", false, "split for Neon achievement");
+	settings.Add("powerSplit", false, "split for Powerful achievement (all achievements only)");
+	settings.Add("neonSplit", false, "split for Neon achievement (all achievements only)");
 	
 	bool bossKilled = false;
 }
