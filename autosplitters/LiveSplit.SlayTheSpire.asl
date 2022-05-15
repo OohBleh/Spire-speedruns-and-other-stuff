@@ -25,12 +25,11 @@ startup
     dynamic[,] _settings =
     {
         { null, "startSeed", "Start when generating a new seed",    true },
-        { null, "startSlot", "Start when choosing a new save slot", false },
+        { null, "splitVictory", "Split after reaching the victory room (skipping Act III boss)", true },
+        { null, "splitChest", "Split when reaching a boss chest without killing a boss (boss skip)", true },
         { null, "resetDeath", "reset on deaths", true },
 
         { null, "splitLvlChange", "Split on ascension progression",  false },
-        { null, "splitVictory", "Split when getting to the victory room", true },
-        { null, "splitChest", "Split when reaching a boss chest without killing a boss", true },
         { null, "bosses", "Split when defeating a boss:", true },
             { "bosses", "boss_AUTOMATON", "AUTOMATON", true },
             { "bosses", "boss_CHAMP",     "CHAMP",     true },
@@ -42,7 +41,9 @@ startup
             { "bosses", "boss_SLIME",     "SLIME",     true },
             { "bosses", "boss_WIZARD",    "WIZARD",    true },
 
-        { null, "ach", "Split when unlocking an achievement:", false },
+        { null, "startSlot", "Start when choosing a new save slot", false },
+        { null, "ach", "Split when unlocking the following achievements:", false },
+            { "ach", "ach_ASCEND_0",     "ASCEND_0 (for Ascension climb speedruns)",     false },
             { "ach", "ach_RUBY",          "RUBY",          false },
             { "ach", "ach_RUBY_PLUS",     "RUBY_PLUS",     false },
             { "ach", "ach_EMERALD",       "EMERALD",       false },
@@ -51,7 +52,7 @@ startup
             { "ach", "ach_SAPPHIRE_PLUS", "SAPPHIRE_PLUS", false },
             { "ach", "ach_AMETHYST",      "AMETHYST",      false },
             { "ach", "ach_AMETHYST_PLUS", "AMETHYST_PLUS", false },
-            { "ach", "ach_ASCEND_20",     "ASCEND_20",     false },
+            { "ach", "ach_ASCEND_20",     "ASCEND_20 (also for Ascension climb speedruns)",     false },
             { "ach", "ach_LUCKY_DAY",     "LUCKY_DAY",     false },
             { "ach", "ach_NEON",          "NEON",          false },
             { "ach", "ach_POWERFUL",      "POWERFUL",      false }
