@@ -21,11 +21,11 @@ state("SlayTheSpire")
 
 startup
 {
-	settings.Add("oneChar", true, "1-character run");
-	settings.Add("fourChar", false, "4-character run");
-	settings.Add("deathReset", false, "reset on death");
+	settings.Add("oneChar", true, "1-character mode (splits on every boss kill or skip)");
+	settings.Add("fourChar", false, "4-character mode (splits on every Act III boss kill or skip)");
+	settings.Add("deathReset", false, "resets on death (only for 1-character runs)");
 	
-	settings.Add("ascClimb", false, "a0 -- a20");
+	settings.Add("ascClimb", false, "ascension climb");
 	settings.Add("allAchieves", false, "all achievements");
 	settings.Add("powerSplit", false, "split for Powerful achievement");
 	settings.Add("neonSplit", false, "split for Neon achievement");
@@ -94,6 +94,13 @@ update
 					}
 					return true;
 				}
+				
+				else if (System.Text.RegularExpressions.Regex.IsMatch(line, @"(PLAYTIME:)")){
+					if (vars.deathReset){
+						vars.command = "RESET";
+					}
+					return true;
+				}
 			}
 			else if (settings["fourChar"]){
 				if (System.Text.RegularExpressions.Regex.IsMatch(line, @"(Hard Unlock: )(CROW|DONUT|WIZARD)")){
@@ -138,12 +145,7 @@ update
 					vars.command = "SPLIT";
 					return true;
 				}
-			} else if (System.Text.RegularExpressions.Regex.IsMatch(line, @"(PLAYTIME:)")){
-				if (vars.deathReset){
-					vars.command = "RESET";
-				}
-				return true;
-            }
+			}
         }
 	}
 }
