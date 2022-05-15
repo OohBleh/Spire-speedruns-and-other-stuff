@@ -24,7 +24,7 @@ startup
 
     dynamic[,] _settings =
     {
-        { null, "startSeed", "Start when generating a new seed",    true },
+        { null, "startSeed", "Start when generating a new seed (all but All Achievements)",    true },
         { null, "splitVictory", "Split after reaching the victory room (skipping Act III boss)", true },
         { null, "splitChest", "Split when reaching a boss chest without killing a boss (boss skip)", true },
         { null, "resetDeath", "reset on deaths", true },

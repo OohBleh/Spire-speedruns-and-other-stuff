@@ -1,1 +1,21 @@
-TBD
+Recommended settings:
+	1-character speedruns: 
+		Start when generating a new seed, 
+		Split on boss kills, treasure floors with boss skips, and victory room, 
+		Reset on deaths.  
+	
+	4-character speedruns:
+		Start when generating a new seed, 
+		Split on Act III boss kills and victory room.  
+	
+	Ascension Climb:
+		Start when generating a new seed, 
+		Split for ASCEND_0/ASCEND_20 achievements and ascension progression.  
+	
+	All Achievements:
+		Start when creating a new save slot, 
+		Split for all Gem and Gem+ achievements except for your A20 climb character, 
+		Split for ASCEND_20, LUCKY_DAY, and POWERFUL achievements, 
+		optionally split for Neon.  
+		
+		Based on your ascension climb character and route, enable or disable their Gem/Gem+ splits accordingly.  
