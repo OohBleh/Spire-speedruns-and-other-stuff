@@ -27,35 +27,36 @@ startup
         { null, "startSeed", "Start when generating a new seed (all but All Achievements)",          true },
         { null, "splitVictory", "Split after reaching the victory room (skipping Act III boss)",     true },
         { null, "splitChest", "Split when reaching a boss chest without killing a boss (boss skip)", true },
-        { null, "resetDeath", "reset on deaths",                                                     true },
+        { null, "resetDeath", "Reset on deaths",                                                     true },
+		{ null, "resetClose", "Reset when game closes",                                              false },
+		
+        { null, "bosses", "Split when defeating a boss:",                                            true },
+            { "bosses", "boss_GUARDIAN",  "Guardian",                                                true },
+            { "bosses", "boss_GHOST",     "Hexaghost",                                               true },
+            { "bosses", "boss_SLIME",     "Slime Boss",                                              true },
+            { "bosses", "boss_AUTOMATON", "Bronze Automaton",                                        true },
+            { "bosses", "boss_COLLECTOR", "Collector",                                               true },
+            { "bosses", "boss_CHAMP",     "Champ",                                                   true },
+            { "bosses", "boss_CROW",      "Awakened One",                                            true },
+            { "bosses", "boss_DONUT",     "Donu & Deca",                                             true },
+            { "bosses", "boss_WIZARD",    "Time Eater",                                              true },
 
-        { null, "splitLvlChange", "Split on ascension progression",  false },
-        { null, "bosses", "Split when defeating a boss:",            true },
-            { "bosses", "boss_GUARDIAN",  "Guardian",         true },
-            { "bosses", "boss_GHOST",     "Hexaghost",        true },
-            { "bosses", "boss_SLIME",     "Slime Boss",       true },
-            { "bosses", "boss_AUTOMATON", "Bronze Automaton", true },
-            { "bosses", "boss_COLLECTOR", "Collector",        true },
-            { "bosses", "boss_CHAMP",     "Champ",            true },
-            { "bosses", "boss_CROW",      "Awakened One",     true },
-            { "bosses", "boss_DONUT",     "Donu & Deca",      true },
-            { "bosses", "boss_WIZARD",    "Time Eater",       true },
-
-        { null, "startSlot", "Start when choosing a new save slot",                                 false },
-        { null, "ach", "Split when unlocking the following achievements:",                          false },
-            { "ach", "ach_ASCEND_0",     "Ascension 0 (only for Ascension climb speedruns)",        false },
-            { "ach", "ach_RUBY",          "Ruby",                                                   false },
-            { "ach", "ach_RUBY_PLUS",     "Ruby+",                                                  false },
-            { "ach", "ach_EMERALD",       "Emerald",                                                false },
-            { "ach", "ach_EMERALD_PLUS",  "Emerald+",                                               false },
-            { "ach", "ach_SAPPHIRE",      "Sapphire",                                               false },
-            { "ach", "ach_SAPPHIRE_PLUS", "Sapphire+",                                              false },
-            { "ach", "ach_AMETHYST",      "Amethyst",                                               false },
-            { "ach", "ach_AMETHYST_PLUS", "Amethyst+",                                              false },
-            { "ach", "ach_ASCEND_20",     "Asceension 20 (also for Ascension climb speedruns)",     false },
-            { "ach", "ach_LUCKY_DAY",     "My Lucky Day",                                           false },
-            { "ach", "ach_NEON",          "Neon",                                                   false },
-            { "ach", "ach_POWERFUL",      "Powerful",                                               false }
+        { null, "splitLvlChange", "Split on ascension progression",                                  false },
+        { null, "startSlot", "Start when choosing a new save slot",                                  false },
+        { null, "ach", "Split when unlocking the following achievements:",                           false },
+            { "ach", "ach_ASCEND_0",     "Ascension 0 (only for Ascension climb speedruns)",         false },
+            { "ach", "ach_RUBY",          "Ruby",                                                    false },
+            { "ach", "ach_RUBY_PLUS",     "Ruby+",                                                   false },
+            { "ach", "ach_EMERALD",       "Emerald",                                                 false },
+            { "ach", "ach_EMERALD_PLUS",  "Emerald+",                                                false },
+            { "ach", "ach_SAPPHIRE",      "Sapphire",                                                false },
+            { "ach", "ach_SAPPHIRE_PLUS", "Sapphire+",                                               false },
+            { "ach", "ach_AMETHYST",      "Amethyst",                                                false },
+            { "ach", "ach_AMETHYST_PLUS", "Amethyst+",                                               false },
+            { "ach", "ach_ASCEND_20",     "Asceension 20 (also for Ascension climb speedruns)",      false },
+            { "ach", "ach_LUCKY_DAY",     "My Lucky Day",                                            false },
+            { "ach", "ach_NEON",          "Neon",                                                    false },
+            { "ach", "ach_POWERFUL",      "Powerful",                                                false }
     };
 
     for (int i = 0; i < _settings.GetLength(0); i++)
@@ -212,7 +213,11 @@ reset
 
 exit
 {
-    vars.Reader.Close();
+	//print("game closed!");
+    if (settings["resetClose"]){
+		//print("the reader should close...");
+		vars.Reader.Close();
+	}
 }
 
 shutdown
