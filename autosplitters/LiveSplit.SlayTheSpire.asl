@@ -105,11 +105,11 @@ init
 update
 {
 	
-	current.Line = vars.Reader.ReadLine();
-	
-    if (vars.Reader == null){
+	if (vars.Reader == null){
         return false;
 	}
+	
+    current.Line = vars.Reader.ReadLine();
 	
     // Check whether file contents were reset.
     current.LinesInLog = vars.Reader.BaseStream.Length;
