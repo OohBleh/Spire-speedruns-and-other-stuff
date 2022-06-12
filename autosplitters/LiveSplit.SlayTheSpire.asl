@@ -1,232 +1,198 @@
-/*
-	adapted from ClownFiesta AKA FresherDenimAll's splitter: 
-		https://github.com/ClownFiesta/AutoSplitters
-	overhauled by Ero in May 2022
-	maintained by OohBleh
-*/
+/* Autosplitter v1.0 2018-04-09
+SlayTheSpire Autosplitter by ClownFiesta AKA FresherDenimAll
+Hosted on https://github.com/ClownFiesta/AutoSplitters
+
+Please notify the author before attempting to publish a new AutoSplitter for the game,
+I might be working on a new version already locally.
+
+Honorable mention: Phantom. He created the previous Autosplitter for the game which you can see at:
+https://github.com/Phxntxm/Slay-The-Spire-Autosplitter
+
+(early 2022)
+	Moved to https://github.com/OohBleh/Spire-speedruns-and-other-stuff/tree/main/autosplitters
+	Maintained by OohBleh
+ */
 
 state("javaw") {}
 state("SlayTheSpire") {}
 
 startup
 {
-    vars.Log = (Action<object>)(output => print("[Slay the Spire] " + output));
-    vars.TryMatch = (Func<string, string, string>)((value, regex) =>
-    {
-        var match = System.Text.RegularExpressions.Regex.Match(value, regex);
-        if (match.Success){
-			return match.Groups[1].Value;
-		} else{
-			return;
-		}
-		//return new { Success = match.Success, Value = match.Success ? match.Groups[1].Value : null };
-    });
-
-    dynamic[,] _settings =
-    {
-        { null, "startSeed",    "Start when generating a new seed (all but All Achievements)",         true },
-        { null, "splitVictory", "Split after reaching the victory room (skipping Act III boss)",       true },
-        { null, "splitChest",   "Split when reaching a boss chest without killing a boss (boss skip)", true },
-        { null, "resetDeath",   "Reset on deaths",                                                     true },
-		{ null, "resetClose",   "Reset when game closes",                                              false },
-        { null, "bosses",       "Split when defeating a boss:",                                        true },
-            { "bosses", "boss_GUARDIAN",  "Guardian",                                                  true },
-            { "bosses", "boss_GHOST",     "Hexaghost",                                                 true },
-            { "bosses", "boss_SLIME",     "Slime Boss",                                                true },
-            { "bosses", "boss_AUTOMATON", "Bronze Automaton",                                          true },
-            { "bosses", "boss_COLLECTOR", "Collector",                                                 true },
-            { "bosses", "boss_CHAMP",     "Champ",                                                     true },
-            { "bosses", "boss_CROW",      "Awakened One",                                              true },
-            { "bosses", "boss_DONUT",     "Donu & Deca",                                               true },
-            { "bosses", "boss_WIZARD",    "Time Eater",                                                true },
-
-        { null, "splitLvlChange",   "Split on ascension progression",                                  false },
-        { null, "startSlot",        "Start when choosing a new save slot",                             false },
-        { null, "achieveListSplit", "Split when opening the achievements page",                        false },
-        { null, "ach",              "Split when unlocking the following achievements:",                false },
-            { "ach", "ach_ASCEND_0",      "Ascension 0 (only for Ascension climb speedruns)",          false },
-            { "ach", "ach_RUBY",          "Ruby",                                                      false },
-            { "ach", "ach_RUBY_PLUS",     "Ruby+",                                                     false },
-            { "ach", "ach_EMERALD",       "Emerald",                                                   false },
-            { "ach", "ach_EMERALD_PLUS",  "Emerald+",                                                  false },
-            { "ach", "ach_SAPPHIRE",      "Sapphire",                                                  false },
-            { "ach", "ach_SAPPHIRE_PLUS", "Sapphire+",                                                 false },
-            { "ach", "ach_AMETHYST",      "Amethyst",                                                  false },
-            { "ach", "ach_AMETHYST_PLUS", "Amethyst+",                                                 false },
-            { "ach", "ach_ASCEND_20",     "Ascension 20 (also for Ascension climb speedruns)",         false },
-            { "ach", "ach_LUCKY_DAY",     "My Lucky Day",                                              false },
-            { "ach", "ach_NEON",          "Neon",                                                      false },
-            { "ach", "ach_POWERFUL",      "Powerful",                                                  false }
-    };
-
-    for (int i = 0; i < _settings.GetLength(0); i++)
-    {
-        var parent = _settings[i, 0];
-        var id     = _settings[i, 1];
-        var name   = _settings[i, 2];
-        var state  = _settings[i, 3];
-
-        settings.Add(id, state, name, parent);
-    }
+	settings.Add("oneChar", true, "1-character mode (splits on every boss kill or skip)");
+	settings.Add("deathReset", true, "resets on death", "oneChar");
+	settings.Add("fourChar", false, "4-character mode (splits on every Act III boss kill or skip)");
+	
+	settings.Add("ascClimb", false, "ascension climb");
+	settings.Add("allAchieves", false, "all achievements");
+	settings.Add("powerSplit", false, "split for Powerful achievement", "allAchieves");
+	settings.Add("neonSplit", false, "split for Neon achievement", "allAchieves");
+	
+	bool bossKilled = false;
 }
+
+
 
 init
 {
-    var relPath = game.ProcessName == "javaw" ? @"\..\.." : "";
-    var log = Path.GetDirectoryName(modules.First().FileName) + relPath + @"\sendToDevs\logs\SlayTheSpire.log";
-	
-	/*
-	var log = "";
+    //Get the path for the logs
+    
 	if (game.ProcessName == "javaw"){
-		log =  System.IO.Directory.GetParent(modules.First().FileName).FullName + "\\..\\..\\sendToDevs\\logs\\SlayTheSpire.log";
+		vars.stsLogPath =  System.IO.Directory.GetParent(modules.First().FileName).FullName + "\\..\\..\\sendToDevs\\logs\\SlayTheSpire.log";
 	} else{
-		log =  System.IO.Directory.GetParent(modules.First().FileName).FullName + "\\sendToDevs\\logs\\SlayTheSpire.log";
+		vars.stsLogPath =  System.IO.Directory.GetParent(modules.First().FileName).FullName + "\\sendToDevs\\logs\\SlayTheSpire.log";
 	}
-	*/
 	
-    try
-    {
-        vars.Reader = new StreamReader(new FileStream(log, FileMode.Open, FileAccess.Read, FileShare.ReadWrite));
-        vars.Reader.ReadToEnd();
-    }
-    catch
-    {
-		vars.Log("Cannot open Slay the Spire log!");
-        vars.Log(Path.GetFullPath(log));
-        vars.Reader = null;
-    }
-
-    current.Line = "";
-	current.LinesInLog = 0;
 	
-	vars.HasKilledBoss = false;
+	//vars.stsLogPath =  System.IO.Directory.GetParent(modules.First().FileName).FullName + "\\..\\..\\sendToDevs\\logs\\SlayTheSpire.log";
+	
+    //Open the logs and set the position to the end of the file
+    vars.reader = new StreamReader(new FileStream(vars.stsLogPath, FileMode.Open, FileAccess.Read, FileShare.ReadWrite));
+    vars.reader.BaseStream.Seek(0, SeekOrigin.End);
+    vars.lastPointerPosition = vars.reader.BaseStream.Position;
+    //Set the command to "UPDATE"
+    vars.command = "UPDATE";
 }
 
 update
 {
-	
-	if (vars.Reader == null){
+
+    if (vars.reader.BaseStream.Length == vars.lastPointerPosition){ //If the logs haven't changed, skip the rest of the code (update, reset, split, start, etc.). We place it first to lessen the load on the computer
         return false;
+    } else if (vars.reader.BaseStream.Length < vars.lastPointerPosition){ //If the logs have been reset, then place the pointer at the end and update vars.lastPointerPosition and skip the rest of the code.
+        vars.reader.BaseStream.Seek(0, SeekOrigin.End);
+        vars.lastPointerPosition = vars.reader.BaseStream.Position;
+        return false;
+    }
+
+    string line = "";
+    while((line = vars.reader.ReadLine()) != null){ //Read the log until its end
+        //Updates vars.lastPointerPosition to its new position.
+        vars.lastPointerPosition = vars.reader.BaseStream.Position;
+        
+        //Changes the value of vars.command depending on the content of line and returns true if a command needs to be issued.
+        if(line.Contains("Generating seeds")){
+            vars.command = "START";
+            return true;
+        } else if (timer.CurrentPhase == TimerPhase.Running){
+			
+			// listen for a boss kill
+			if (settings["oneChar"]){
+				if (System.Text.RegularExpressions.Regex.IsMatch(line, @"(Hard Unlock: )(GUARDIAN|GHOST|SLIME|CHAMP|AUTOMATON|COLLECTOR|CROW|DONUT|WIZARD)")){
+					vars.command = "SPLIT";
+					vars.bossKilled = true;
+					return true;
+				}
+				
+				else if(line.Contains("TreasureRoomBoss") || line.Contains("VictoryRoom")){
+					if (vars.bossKilled){
+						vars.bossKilled = false;
+					} else{
+						vars.command = "SPLIT";
+					}
+					return true;
+				}
+				
+				else if (System.Text.RegularExpressions.Regex.IsMatch(line, @"(PLAYTIME:)")){
+					if (vars.deathReset){
+						vars.command = "RESET";
+					}
+					return true;
+				}
+			}
+			else if (settings["fourChar"]){
+				if (System.Text.RegularExpressions.Regex.IsMatch(line, @"(Hard Unlock: )(CROW|DONUT|WIZARD)")){
+					vars.command = "SPLIT";
+					vars.bossKilled = true;
+					return true;
+				}
+				
+				if(line.Contains("VictoryRoom")){
+					if (vars.bossKilled){
+						vars.bossKilled = false;
+					} else{
+						vars.command = "SPLIT";
+					}
+					return true;
+				}
+			} else if (settings["ascClimb"]){
+				if(line.Contains("Generating seeds")){
+					vars.command = "START";
+					return true;
+				} else if (line.Contains("ASCENSION LEVEL IS NOW: ")){
+					vars.command = "SPLIT";
+					return true;
+				} else if (System.Text.RegularExpressions.Regex.IsMatch(line, @"(Achievement Unlocked: )(RUBY|EMERALD|SAPPHIRE|AMETHYST|ASCEND_20)")){
+					vars.command = "SPLIT";
+					return true;
+				}
+			} else if (settings["allAchieves"]){
+				if(line.Contains("UPDATING DEFAULT SLOT: ")){
+					vars.command = "START";
+					return true;
+				} else if (line.Contains("ASCENSION LEVEL IS NOW: ")){
+					vars.command = "SPLIT";
+					return true;
+				} else if (settings["powerSplit"] && System.Text.RegularExpressions.Regex.IsMatch(line, @"(Achievement Unlocked: )(POWERFUL)")){
+					vars.command = "SPLIT";
+					return true;
+				} else if (settings["neonSplit"] && System.Text.RegularExpressions.Regex.IsMatch(line, @"(Achievement Unlocked: )(NEON)")){
+					vars.command = "SPLIT";
+					return true;
+				} else if (System.Text.RegularExpressions.Regex.IsMatch(line, @"(Achievement Unlocked: )(EMERALD|SAPPHIRE|AMETHYST|LUCKY_DAY|EMERALD_PLUS|SAPPHIRE_PLUS|AMETHYST_PLUS|ASCEND_20)")){
+					vars.command = "SPLIT";
+					return true;
+				}
+			}
+        }
 	}
-	
-    current.Line = vars.Reader.ReadLine();
-	
-    // Check whether file contents were reset.
-    current.LinesInLog = vars.Reader.BaseStream.Length;
-    if (old.LinesInLog > current.LinesInLog)
-    {
-		vars.Reader.BaseStream.Position = 0;
-        return false;
+}
+
+reset
+{
+    if (vars.command == "RESET"){
+        vars.command = "UPDATE";
+		vars.bossKilled = false;
+        return true;
+    }
+}
+
+split
+{
+    if (vars.command == "SPLIT"){
+        vars.command = "UPDATE";
+        return true;
     }
 }
 
 start
 {
-    // If the line didn't change or we're at the end of the file, we don't care.
-    // For convenience.
-    var l = current.Line;
-
-    if (old.Line == l || l == null) return;
-
-    if (settings["startSeed"])
-    {
-        return l.Contains("Generating seeds");
-    }
-
-    if (settings["startSlot"])
-    {
-        return l.Contains("UPDATING DEFAULT SLOT: ");
-    }
-	
-	vars.HasKilledBoss = false;
-}
-
-split
-{
-    var l = current.Line;
-	if (old.Line == l || l == null) return;
-
-    
-    // Split for level change.
-    if (l.Contains("ASCENSION LEVEL IS NOW: "))
-    {
-        return settings["splitLvlChange"];
-    }
-
-    // Split for victory rooms.
-    if (l.Contains("VictoryRoom"))
-    {
-        if (vars.HasKilledBoss)
-        {
-            vars.HasKilledBoss = false;
-            return;
-        }
-
-        return settings["splitVictory"];
-    }
-	
-	// Split for boss chest rooms.
-    if (l.Contains("TreasureRoomBoss"))
-    {
-        if (vars.HasKilledBoss)
-        {
-            vars.HasKilledBoss = false;
-            return;
-        }
-
-        return settings["splitChest"];
-    }
-	
-	// Split for boss chest rooms.
-    //
-	if (l.Contains("Loaded texture Achievement texture atlas."))
-    {
-        return settings["achieveListSplit"];
-    }
-	
-
-    // Split for achievements.
-    string ach = vars.TryMatch(l, "Achievement Unlocked: (AMETHYST|AMETHYST_PLUS|EMERALD|EMERALD_PLUS|SAPPHIRE|SAPPHIRE_PLUS|RUBY|ASCEND_20|LUCKY_DAY|NEON|POWERFUL)");
-    
-	if (ach != null)
-    {
-        return settings["ach_" + ach];
-    }
-
-    // Split for boss kills.
-    string boss = vars.TryMatch(l, "Hard Unlock: (AUTOMATON|CHAMP|COLLECTOR|CROW|DONUT|GHOST|GUARDIAN|SLIME|WIZARD)");
-    if (boss != null)
-    {
-        vars.HasKilledBoss = true;
-        return settings["boss_" + boss];
-    }
-}
-
-reset
-{
-    var l = current.Line;
-	
-	if (old.Line == l || l == null) return;
-
-    
-    //
-	//if (vars.TryMatch(l, "PLAYTIME:").Success)
-	if (l.Contains("PLAYTIME:")){
-		vars.HasKilledBoss = false;
-        return settings["resetDeath"];
+    if (vars.command == "START"){
+		vars.bossKilled = false;
+        vars.command = "UPDATE";
+        return true;
     }
 }
 
 exit
-{
-	//print("game closed!");
-    if (settings["resetClose"]){
-		//print("the reader should close...");
-		vars.Reader.Close();
-	}
+{   
+    // Resets the timer if the game closes (either from a bug or manually)
+    new TimerModel() { CurrentState = timer }.Reset();
+    vars.reader.Close();
+    vars.lastPointerPosition = 0;
 }
 
 shutdown
 {
-    vars.Reader.Close();
+    // Closing the reader (Only useful when you close LiveSplit before closing SlayTheSpire)
+    vars.reader.Close();
+}
+
+isLoading
+{
+    // Blank isLoading to avoid any warnings
+}
+
+gameTime
+{
+    // Blank gameTime to avoid any warnings
 }
