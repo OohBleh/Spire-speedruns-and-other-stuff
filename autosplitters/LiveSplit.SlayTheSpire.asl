@@ -93,7 +93,7 @@ update
 				}
 				
 				else if (System.Text.RegularExpressions.Regex.IsMatch(line, @"(PLAYTIME:)")){
-					if (vars.deathReset){
+					if (settings["deathReset"]){
 						vars.command = "RESET";
 					}
 					return true;
