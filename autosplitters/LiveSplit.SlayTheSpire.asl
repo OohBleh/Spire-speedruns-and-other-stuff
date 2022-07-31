@@ -7,28 +7,32 @@ I might be working on a new version already locally.
 
 Honorable mention: Phantom. He created the previous Autosplitter for the game which you can see at:
 https://github.com/Phxntxm/Slay-The-Spire-Autosplitter
-
-(early 2022)
-	Moved to https://github.com/OohBleh/Spire-speedruns-and-other-stuff/tree/main/autosplitters
-	Maintained by OohBleh
  */
 
-state("javaw") {}
-state("SlayTheSpire") {}
-
-startup
+state("SlayTheSpire")
 {
-	settings.Add("oneChar", true, "1-character mode (splits on every boss kill or skip)");
-	settings.Add("deathReset", true, "resets on death", "oneChar");
-	settings.Add("fourChar", false, "4-character mode (splits on every Act III boss kill or skip)");
-	
-	settings.Add("ascClimb", false, "ascension climb");
-	settings.Add("allAchieves", false, "all achievements");
-	settings.Add("powerSplit", false, "split for Powerful achievement", "allAchieves");
-	settings.Add("neonSplit", false, "split for Neon achievement", "allAchieves");
-	
-	bool bossKilled = false;
+
 }
+state("javaw")
+{
+
+}
+
+
+/*
+init
+{
+    //Get the path for the logs
+    vars.stsLogPath =  System.IO.Directory.GetParent(modules.First().FileName).FullName + "\\sendToDevs\\logs\\SlayTheSpire.log";
+    //Open the logs and set the position to the end of the file
+    vars.reader = new StreamReader(new FileStream(vars.stsLogPath, FileMode.Open, FileAccess.Read, FileShare.ReadWrite));
+    vars.reader.BaseStream.Seek(0, SeekOrigin.End);
+    vars.lastPointerPosition = vars.reader.BaseStream.Position;
+    //Set the command to "UPDATE"
+    vars.command = "UPDATE";
+}
+*/
+
 
 
 
@@ -73,85 +77,21 @@ update
         if(line.Contains("Generating seeds")){
             vars.command = "START";
             return true;
-        } else if (timer.CurrentPhase == TimerPhase.Running){
-			
-			// listen for a boss kill
-			if (settings["oneChar"]){
-				if (System.Text.RegularExpressions.Regex.IsMatch(line, @"(Hard Unlock: )(GUARDIAN|GHOST|SLIME|CHAMP|AUTOMATON|COLLECTOR|CROW|DONUT|WIZARD)")){
-					vars.command = "SPLIT";
-					vars.bossKilled = true;
-					return true;
-				}
-				
-				else if(line.Contains("TreasureRoomBoss") || line.Contains("VictoryRoom")){
-					if (vars.bossKilled){
-						vars.bossKilled = false;
-					} else{
-						vars.command = "SPLIT";
-					}
-					return true;
-				}
-				
-				else if (System.Text.RegularExpressions.Regex.IsMatch(line, @"(PLAYTIME:)")){
-					if (settings["deathReset"]){
-						vars.command = "RESET";
-					}
-					return true;
-				}
-			}
-			else if (settings["fourChar"]){
-				if (System.Text.RegularExpressions.Regex.IsMatch(line, @"(Hard Unlock: )(CROW|DONUT|WIZARD)")){
-					vars.command = "SPLIT";
-					vars.bossKilled = true;
-					return true;
-				}
-				
-				if(line.Contains("VictoryRoom")){
-					if (vars.bossKilled){
-						vars.bossKilled = false;
-					} else{
-						vars.command = "SPLIT";
-					}
-					return true;
-				}
-			} else if (settings["ascClimb"]){
-				if(line.Contains("Generating seeds")){
-					vars.command = "START";
-					return true;
-				} else if (line.Contains("ASCENSION LEVEL IS NOW: ")){
-					vars.command = "SPLIT";
-					return true;
-				} else if (System.Text.RegularExpressions.Regex.IsMatch(line, @"(Achievement Unlocked: )(RUBY|EMERALD|SAPPHIRE|AMETHYST|ASCEND_20)")){
-					vars.command = "SPLIT";
-					return true;
-				}
-			} else if (settings["allAchieves"]){
-				if(line.Contains("UPDATING DEFAULT SLOT: ")){
-					vars.command = "START";
-					return true;
-				} else if (line.Contains("ASCENSION LEVEL IS NOW: ")){
-					vars.command = "SPLIT";
-					return true;
-				} else if (settings["powerSplit"] && System.Text.RegularExpressions.Regex.IsMatch(line, @"(Achievement Unlocked: )(POWERFUL)")){
-					vars.command = "SPLIT";
-					return true;
-				} else if (settings["neonSplit"] && System.Text.RegularExpressions.Regex.IsMatch(line, @"(Achievement Unlocked: )(NEON)")){
-					vars.command = "SPLIT";
-					return true;
-				} else if (System.Text.RegularExpressions.Regex.IsMatch(line, @"(Achievement Unlocked: )(EMERALD|SAPPHIRE|AMETHYST|LUCKY_DAY|EMERALD_PLUS|SAPPHIRE_PLUS|AMETHYST_PLUS|ASCEND_20)")){
-					vars.command = "SPLIT";
-					return true;
-				}
-			}
+        } else if (timer.CurrentPhase == TimerPhase.Running & System.Text.RegularExpressions.Regex.IsMatch(line, @"(Hard Unlock: )(GUARDIAN|GHOST|SLIME|CHAMP|AUTOMATON|COLLECTOR|CROW|DONUT|WIZARD)")){
+            vars.command = "SPLIT";
+            return true;
+        } else if (System.Text.RegularExpressions.Regex.IsMatch(line, @"(PLAYTIME:)")){
+            vars.command = "RESET";
+            return true;
+            }
         }
-	}
+
 }
 
 reset
 {
     if (vars.command == "RESET"){
         vars.command = "UPDATE";
-		vars.bossKilled = false;
         return true;
     }
 }
@@ -167,7 +107,6 @@ split
 start
 {
     if (vars.command == "START"){
-		vars.bossKilled = false;
         vars.command = "UPDATE";
         return true;
     }
