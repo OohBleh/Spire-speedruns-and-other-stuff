@@ -56,6 +56,7 @@ startup
             { "ach", "ach_ASCEND_20",     "Ascension 20 (also for Ascension climb speedruns)",         false },
             { "ach", "ach_LUCKY_DAY",     "My Lucky Day",                                              false },
             { "ach", "ach_NEON",          "Neon",                                                      false },
+            { "ach", "ach_FOCUSED",       "Focused",                                                   false },
             { "ach", "ach_POWERFUL",      "Powerful",                                                  false }
     };
 
@@ -186,7 +187,7 @@ split
 	
 
     // Split for achievements.
-    string ach = vars.TryMatch(l, "Achievement Unlocked: (AMETHYST|AMETHYST_PLUS|EMERALD|EMERALD_PLUS|SAPPHIRE|SAPPHIRE_PLUS|RUBY|ASCEND_20|LUCKY_DAY|NEON|POWERFUL)");
+    string ach = vars.TryMatch(l, "Achievement Unlocked: (AMETHYST|AMETHYST_PLUS|EMERALD|EMERALD_PLUS|SAPPHIRE|SAPPHIRE_PLUS|RUBY|ASCEND_20|LUCKY_DAY|NEON|FOCUSED|POWERFUL)");
     
 	if (ach != null)
     {
